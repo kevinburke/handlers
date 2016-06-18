@@ -206,8 +206,8 @@ func writeLog(r *http.Request, u url.URL, t time.Time, status int, size int) {
 	Logger.Info("", args...)
 }
 
-// Log serves the http request and writes the response data to w. Any errors
-// writing to w are ignored.
+// Log serves the http request and writes information about the
+// request/response to w. Any errors writing to w are ignored.
 func Log(h http.Handler) http.Handler {
 	return &logHandler{h}
 }
