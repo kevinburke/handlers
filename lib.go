@@ -16,6 +16,11 @@ import (
 	"github.com/satori/go.uuid"
 )
 
+// All wraps h with every handler in this file.
+func All(h http.Handler, serverName string) http.Handler {
+	return Log(Debug(UUID(JSON(Server(h, serverName)))))
+}
+
 // JSON sets the Content-Type to application/json; charset=utf-8
 func JSON(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

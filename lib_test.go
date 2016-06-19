@@ -16,6 +16,7 @@ func (ts testServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func TestJSON(t *testing.T) {
+	t.Parallel()
 	w := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/", nil)
 	if err != nil {
@@ -35,6 +36,7 @@ func TestJSON(t *testing.T) {
 }
 
 func TestServer(t *testing.T) {
+	t.Parallel()
 	w := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/", nil)
 	if err != nil {
@@ -44,5 +46,22 @@ func TestServer(t *testing.T) {
 	Server(ts, "foo bar").ServeHTTP(w, req)
 	if w.Header().Get("Server") != "foo bar" {
 		t.Errorf("expected server header \"foo bar\", got %s", w.Header().Get("Server"))
+	}
+}
+
+func TestAll(t *testing.T) {
+	t.Parallel()
+	w := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "/", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ts := testServer(false)
+	All(ts, "foo bar").ServeHTTP(w, req)
+	if w.Header().Get("Server") != "foo bar" {
+		t.Errorf("expected server header \"foo bar\", got %s", w.Header().Get("Server"))
+	}
+	if w.Header().Get("Content-Type") != "application/json; charset=utf-8" {
+		t.Errorf("expected content-type \"application/json\", got %s", w.Header().Get("Content-Type"))
 	}
 }
