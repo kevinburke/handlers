@@ -33,3 +33,16 @@ func TestJSON(t *testing.T) {
 		t.Errorf("expected content-type \"application/json\", got %s", w.Header().Get("Content-Type"))
 	}
 }
+
+func TestServer(t *testing.T) {
+	w := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "/", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ts := testServer(false)
+	Server(ts, "foo bar").ServeHTTP(w, req)
+	if w.Header().Get("Server") != "foo bar" {
+		t.Errorf("expected server header \"foo bar\", got %s", w.Header().Get("Server"))
+	}
+}
