@@ -32,12 +32,12 @@ func JSON(h http.Handler) http.Handler {
 }
 
 type serverWriter struct {
-	w		http.ResponseWriter
-	name		string
-	wroteHeader	bool
+	w           http.ResponseWriter
+	name        string
+	wroteHeader bool
 }
 
-func (s serverWriter) WriteHeader(code int) {
+func (s *serverWriter) WriteHeader(code int) {
 	if s.wroteHeader == false {
 		s.w.Header().Set("Server", s.name)
 		s.wroteHeader = true
@@ -45,21 +45,21 @@ func (s serverWriter) WriteHeader(code int) {
 	s.w.WriteHeader(code)
 }
 
-func (s serverWriter) Write(b []byte) (int, error) {
+func (s *serverWriter) Write(b []byte) (int, error) {
 	return s.w.Write(b)
 }
 
-func (s serverWriter) Header() http.Header {
+func (s *serverWriter) Header() http.Header {
 	return s.w.Header()
 }
 
 // Server attaches a Server header to the response.
 func Server(h http.Handler, serverName string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		sw := serverWriter{
-			w:		w,
-			name:		serverName,
-			wroteHeader:	false,
+		sw := &serverWriter{
+			w:           w,
+			name:        serverName,
+			wroteHeader: false,
 		}
 		h.ServeHTTP(sw, r)
 	})
@@ -113,9 +113,9 @@ func Debug(h http.Handler) http.Handler {
 // responseLogger is wrapper of http.ResponseWriter that keeps track of its HTTP
 // status code and body size
 type responseLogger struct {
-	w	http.ResponseWriter
-	status	int
-	size	int
+	w      http.ResponseWriter
+	status int
+	size   int
 }
 
 func (l *responseLogger) Header() http.Header {
