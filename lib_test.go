@@ -49,6 +49,23 @@ func TestServer(t *testing.T) {
 	}
 }
 
+func TestServerOverwritesInnerHeaders(t *testing.T) {
+	t.Parallel()
+	w := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "/", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	sh := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Server", "Inner header!")
+		testServer(false).ServeHTTP(w, r)
+	})
+	Server(sh, "foo bar").ServeHTTP(w, req)
+	if w.Header().Get("Server") != "foo bar" {
+		t.Errorf("expected server header \"foo bar\", got %s", w.Header().Get("Server"))
+	}
+}
+
 func TestAll(t *testing.T) {
 	t.Parallel()
 	w := httptest.NewRecorder()

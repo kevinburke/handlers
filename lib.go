@@ -29,11 +29,37 @@ func JSON(h http.Handler) http.Handler {
 	})
 }
 
+type serverWriter struct {
+	w           http.ResponseWriter
+	name        string
+	wroteHeader bool
+}
+
+func (s serverWriter) WriteHeader(code int) {
+	if s.wroteHeader == false {
+		s.w.Header().Set("Server", s.name)
+		s.wroteHeader = true
+	}
+	s.w.WriteHeader(code)
+}
+
+func (s serverWriter) Write(b []byte) (int, error) {
+	return s.w.Write(b)
+}
+
+func (s serverWriter) Header() http.Header {
+	return s.w.Header()
+}
+
 // Server attaches a Server header to the response.
 func Server(h http.Handler, serverName string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Server", serverName)
-		h.ServeHTTP(w, r)
+		sw := serverWriter{
+			w:           w,
+			name:        serverName,
+			wroteHeader: false,
+		}
+		h.ServeHTTP(sw, r)
 	})
 }
 
