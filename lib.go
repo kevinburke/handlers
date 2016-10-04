@@ -71,7 +71,7 @@ func UUID(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		rid := r.Header.Get("X-Request-Id")
 		if rid == "" {
-			SetRequestID(r, uuid.NewV4())
+			r = SetRequestID(r, uuid.NewV4())
 		}
 		h.ServeHTTP(w, r)
 	})
