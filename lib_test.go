@@ -1,9 +1,12 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	uuid "github.com/satori/go.uuid"
 )
 
 type testServer bool
@@ -80,5 +83,41 @@ func TestAll(t *testing.T) {
 	}
 	if w.Header().Get("Content-Type") != "application/json; charset=utf-8" {
 		t.Errorf("expected content-type \"application/json\", got %s", w.Header().Get("Content-Type"))
+	}
+}
+
+func TestSetRequestID(t *testing.T) {
+	req, _ := http.NewRequest("GET", "/", nil)
+	u := uuid.NewV4()
+	req = SetRequestID(req, u)
+	fmt.Printf("%#v\n", req.Context())
+	rid := req.Header.Get("X-Request-Id")
+	if rid != u.String() {
+		t.Errorf("expected X-Request-Id to equal %s, got %s", u.String(), rid)
+	}
+	val := req.Context().Value(requestID)
+	v, ok := val.(uuid.UUID)
+	if !ok {
+		t.Fatalf("couldn't get requestID out of the request context")
+	}
+	if v.String() != u.String() {
+		t.Errorf("expected %s (from context) to equal %s", v.String(), u.String())
+	}
+}
+
+func TestGetRequestID(t *testing.T) {
+	req, _ := http.NewRequest("GET", "/", nil)
+	u := uuid.NewV4()
+	_, ok := GetRequestID(req)
+	if ok != false {
+		t.Error("expected request id get to return false, got true")
+	}
+	req = SetRequestID(req, u)
+	uid, ok := GetRequestID(req)
+	if !ok {
+		t.Error("expected request id get to return true, got false")
+	}
+	if uid.String() != u.String() {
+		t.Errorf("expected %s (from context) to equal %s", uid.String(), u.String())
 	}
 }
