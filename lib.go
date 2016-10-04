@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"bytes"
-	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -64,35 +63,6 @@ func Server(h http.Handler, serverName string) http.Handler {
 		}
 		h.ServeHTTP(sw, r)
 	})
-}
-
-type RequestID int
-
-var requestID RequestID = 0
-
-// SetRequestID sets the given UUID on the request and returns the modified
-// HTTP request.
-func SetRequestID(r *http.Request, u uuid.UUID) *http.Request {
-	r.Header.Set("X-Request-Id", u.String())
-	return r.WithContext(context.WithValue(r.Context(), requestID, u))
-}
-
-// GetRequestID returns a UUID (if it exists on r) or false if none could
-// be found.
-func GetRequestID(r *http.Request) (uuid.UUID, bool) {
-	rid := r.Header.Get("X-Request-Id")
-	if rid != "" {
-		u, err := uuid.FromString(rid)
-		if err == nil {
-			return u, true
-		}
-	}
-	val := r.Context().Value(requestID)
-	if val != nil {
-		v, ok := val.(uuid.UUID)
-		return v, ok
-	}
-	return uuid.UUID{}, false
 }
 
 // UUID attaches a X-Request-Id header to the request, and sets one on the
