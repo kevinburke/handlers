@@ -36,6 +36,8 @@ func TestGetDuration(t *testing.T) {
 	}
 	w := httptest.NewRecorder()
 	h := Duration(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// ensure we don't round down to 0
+		time.Sleep(1 * time.Millisecond)
 		w.Write([]byte("hello world"))
 	}))
 	h.ServeHTTP(w, req)
@@ -46,7 +48,7 @@ func TestGetDuration(t *testing.T) {
 	if dur == 0 {
 		t.Errorf("got 0 duration, wanted a greater than 0 duration")
 	}
-	if dur > time.Second {
-		t.Errorf("got a duration greater than 1 second: %v", dur)
+	if dur > 5*time.Millisecond {
+		t.Errorf("got a duration greater than 5ms: %v", dur)
 	}
 }

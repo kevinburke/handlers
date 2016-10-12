@@ -18,7 +18,7 @@ import (
 	"github.com/satori/go.uuid"
 )
 
-const version = "0.13"
+const version = "0.11"
 
 // All wraps h with every handler in this file.
 func All(h http.Handler, serverName string) http.Handler {
@@ -41,7 +41,7 @@ type startWriter struct {
 }
 
 func (s *startWriter) duration() string {
-	d := time.Since(s.start) / 100 * time.Microsecond
+	d := (time.Since(s.start) / (100 * time.Microsecond)) * (100 * time.Microsecond)
 	return d.String()
 }
 
