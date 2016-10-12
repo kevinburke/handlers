@@ -42,7 +42,8 @@ func GetDuration(ctx context.Context) time.Duration {
 }
 
 // Duration sets a the start time in the context and sets a X-Request-Duration
-// header on the response.
+// header on the response, from the time this handler started executing to the
+// time of the first WriteHeader() or Write() call.
 func Duration(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now().UTC()

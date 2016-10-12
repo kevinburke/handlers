@@ -35,8 +35,9 @@ func TestGetDuration(t *testing.T) {
 		t.Errorf("expected Duration to be 0, got %v", d)
 	}
 	w := httptest.NewRecorder()
-	ts := testServer(false)
-	h := Duration(ts)
+	h := Duration(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("hello world"))
+	}))
 	h.ServeHTTP(w, req)
 	dur, err := time.ParseDuration(w.Header().Get("X-Request-Duration"))
 	if err != nil {
