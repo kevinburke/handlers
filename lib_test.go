@@ -102,3 +102,30 @@ func TestSetRequestID(t *testing.T) {
 		t.Errorf("expected %s (from context) to equal %s", v.String(), u.String())
 	}
 }
+
+func TestTrailingSlashRedirect(t *testing.T) {
+	req, _ := http.NewRequest("GET", "/", nil)
+	w := httptest.NewRecorder()
+	ts := TrailingSlashRedirect(testServer(false))
+	ts.ServeHTTP(w, req)
+	if w.Code != 200 {
+		t.Errorf("expected Code to be 200, got %d", w.Code)
+	}
+	req, _ = http.NewRequest("GET", "/trailingslash//////", nil)
+	w = httptest.NewRecorder()
+	ts.ServeHTTP(w, req)
+	if w.Code != 301 {
+		t.Errorf("expected Code to be 301, got %d", w.Code)
+	}
+	location := w.Header().Get("Location")
+	if location != "/trailingslash/" {
+		t.Errorf("expected Location header to be /trailingslash/, got %s", location)
+	}
+	req, _ = http.NewRequest("GET", "/trailingslash/", nil)
+	w = httptest.NewRecorder()
+	ts.ServeHTTP(w, req)
+	location = w.Header().Get("Location")
+	if location != "/trailingslash" {
+		t.Errorf("expected Location header to be /trailingslash, got %s", location)
+	}
+}

@@ -103,6 +103,18 @@ func (s *serverWriter) Header() http.Header {
 	return s.w.Header()
 }
 
+// TrailingSlashRedirect redirects any path that ends with a "/" - say,
+// "/messages/" - to the stripped version, say "/messages".
+func TrailingSlashRedirect(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if len(r.URL.Path) > 1 && strings.HasSuffix(r.URL.Path, "/") {
+			http.Redirect(w, r, r.URL.Path[:len(r.URL.Path)-1], http.StatusMovedPermanently)
+			return
+		}
+		h.ServeHTTP(w, r)
+	})
+}
+
 // Server attaches a Server header to the response.
 func Server(h http.Handler, serverName string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
