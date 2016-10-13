@@ -38,9 +38,20 @@ func TestGetDuration(t *testing.T) {
 	h := Duration(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// ensure we don't round down to 0
 		time.Sleep(1 * time.Millisecond)
+		d = GetDuration(r.Context())
+		if d == 0 {
+			t.Errorf("got 0 duration, wanted a greater than 0 duration")
+		}
+		if d > 5*time.Millisecond {
+			t.Errorf("got a duration greater than 5ms: %v", d)
+		}
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("hello world"))
 	}))
 	h.ServeHTTP(w, req)
+	if w.Code != 400 {
+		t.Errorf("expected Code to be 400, got %d", w.Code)
+	}
 	dur, err := time.ParseDuration(w.Header().Get("X-Request-Duration"))
 	if err != nil {
 		t.Fatal(err)

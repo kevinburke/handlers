@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -90,7 +89,6 @@ func TestSetRequestID(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/", nil)
 	u := uuid.NewV4()
 	req = SetRequestID(req, u)
-	fmt.Printf("%#v\n", req.Context())
 	rid := req.Header.Get("X-Request-Id")
 	if rid != u.String() {
 		t.Errorf("expected X-Request-Id to equal %s, got %s", u.String(), rid)
