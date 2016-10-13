@@ -1,3 +1,13 @@
+// Package handlers implements a number of useful HTTP middlewares.
+//
+// The general format of the middlewares in this package is to wrap an existing
+// http.Handler in another one. So if you have a ServeMux, you can simply do:
+//
+//     mux := http.NewServeMux()
+//     h := handlers.Log(handlers.Debug(mux))
+//     http.ListenAndServe(":5050", h)
+//
+// And wrap as many handlers as you'd like using that idiom.
 package handlers
 
 import (
