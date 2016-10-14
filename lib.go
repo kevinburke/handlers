@@ -316,7 +316,6 @@ func timeSinceMs(t time.Time) int64 {
 func writeLog(r *http.Request, u url.URL, t time.Time, status int, size int) {
 	user, _, _ := r.BasicAuth()
 	args := []interface{}{
-		"user", user,
 		"method", r.Method,
 		"path", r.URL.RequestURI(),
 		"time", strconv.FormatInt(timeSinceMs(t), 10),
