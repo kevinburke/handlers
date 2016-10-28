@@ -44,8 +44,8 @@ func TestGetDuration(t *testing.T) {
 		if d == 0 {
 			t.Errorf("got 0 duration, wanted a greater than 0 duration")
 		}
-		if d > 5*time.Millisecond {
-			t.Errorf("got a duration greater than 5ms: %v", d)
+		if d > 50*time.Millisecond {
+			t.Errorf("got a duration greater than 50ms: %v", d)
 		}
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("hello world"))
