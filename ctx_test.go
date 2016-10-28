@@ -12,6 +12,7 @@ import (
 )
 
 func TestGetRequestID(t *testing.T) {
+	t.Parallel()
 	req, _ := http.NewRequest("GET", "/", nil)
 	u := uuid.NewV4()
 	_, ok := GetRequestID(req.Context())
@@ -29,6 +30,7 @@ func TestGetRequestID(t *testing.T) {
 }
 
 func TestGetDuration(t *testing.T) {
+	t.Parallel()
 	req, _ := http.NewRequest("GET", "/", nil)
 	d := GetDuration(req.Context())
 	if d != time.Duration(0) {

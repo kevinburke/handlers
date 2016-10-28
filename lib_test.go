@@ -86,6 +86,7 @@ func TestAll(t *testing.T) {
 }
 
 func TestSetRequestID(t *testing.T) {
+	t.Parallel()
 	req, _ := http.NewRequest("GET", "/", nil)
 	u := uuid.NewV4()
 	req = SetRequestID(req, u)
@@ -104,6 +105,7 @@ func TestSetRequestID(t *testing.T) {
 }
 
 func TestTrailingSlashRedirect(t *testing.T) {
+	t.Parallel()
 	req, _ := http.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
 	ts := TrailingSlashRedirect(testServer(false))

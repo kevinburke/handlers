@@ -8,6 +8,7 @@ import (
 )
 
 func TestRegexpHandler(t *testing.T) {
+	t.Parallel()
 	// GET /v1/jobs/:job-name
 	route := regexp.MustCompile(`^/v1$`)
 
