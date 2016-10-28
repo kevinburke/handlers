@@ -65,3 +65,43 @@ func TestGetDuration(t *testing.T) {
 		t.Errorf("got a duration greater than 5ms: %v", dur)
 	}
 }
+
+func TestSetRequestID(t *testing.T) {
+	t.Parallel()
+	req, _ := http.NewRequest("GET", "/", nil)
+	u := uuid.NewV4()
+	req = SetRequestID(req, u)
+	rid := req.Header.Get("X-Request-Id")
+	if rid != u.String() {
+		t.Errorf("expected X-Request-Id to equal %s, got %s", u.String(), rid)
+	}
+	val := req.Context().Value(requestID)
+	v, ok := val.(uuid.UUID)
+	if !ok {
+		t.Fatalf("couldn't get requestID out of the request context")
+	}
+	if v.String() != u.String() {
+		t.Errorf("expected %s (from context) to equal %s", v.String(), u.String())
+	}
+}
+
+func TestWithTimeout(t *testing.T) {
+	t.Parallel()
+	req, _ := http.NewRequest("GET", "/", nil)
+	h := WithTimeout(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		deadline, ok := r.Context().Deadline()
+		if !ok {
+			t.Error("expected Deadline() to be ok, got not ok")
+		}
+		if deadline.Sub(time.Now()) > 10*time.Millisecond {
+			t.Errorf("too big of a deadline: %v", deadline)
+		}
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("hello world"))
+	}), 10*time.Millisecond)
+	w := httptest.NewRecorder()
+	h.ServeHTTP(w, req)
+	if w.Code != 400 {
+		t.Errorf("expected Code to be 400, got %d", w.Code)
+	}
+}
