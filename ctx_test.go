@@ -61,8 +61,8 @@ func TestGetDuration(t *testing.T) {
 	if dur == 0 {
 		t.Errorf("got 0 duration, wanted a greater than 0 duration")
 	}
-	if dur > 5*time.Millisecond {
-		t.Errorf("got a duration greater than 5ms: %v", dur)
+	if dur > 50*time.Millisecond {
+		t.Errorf("got a duration greater than 50ms: %v", dur)
 	}
 }
 
