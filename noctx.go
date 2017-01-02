@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/aristanetworks/goarista/monotime"
 	"github.com/satori/go.uuid"
 )
 
@@ -33,10 +34,10 @@ func GetRequestID(r *http.Request) (uuid.UUID, bool) {
 // should go outside of any others to accurately capture the request duration.
 func Duration(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now().UTC()
 		sw := &startWriter{
 			w:           w,
-			start:       start,
+			start:       time.Now().UTC(),
+			monoStart:   monotime.Now(),
 			wroteHeader: false,
 		}
 		h.ServeHTTP(sw, r)

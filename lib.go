@@ -24,6 +24,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/aristanetworks/goarista/monotime"
 	log "github.com/inconshreveable/log15"
 	"github.com/kevinburke/rest"
 	"github.com/satori/go.uuid"
@@ -46,13 +47,15 @@ func JSON(h http.Handler) http.Handler {
 
 // startWriter is used by Duration in ctx.go/noctx.go
 type startWriter struct {
-	w           http.ResponseWriter
-	start       time.Time
+	w     http.ResponseWriter
+	start time.Time
+	// use this for durations
+	monoStart   uint64
 	wroteHeader bool
 }
 
 func (s *startWriter) duration() string {
-	d := (time.Since(s.start) / (100 * time.Microsecond)) * (100 * time.Microsecond)
+	d := (time.Duration(monotime.Now()-s.monoStart) / (100 * time.Microsecond)) * (100 * time.Microsecond)
 	return d.String()
 }
 

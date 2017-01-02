@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/aristanetworks/goarista/monotime"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -14,6 +15,7 @@ type ctxVar int
 
 var requestID ctxVar = 0
 var startTime ctxVar = 1
+var startMono ctxVar = 2
 
 // SetRequestID sets the given UUID on the request context and returns the
 // modified HTTP request.
@@ -36,11 +38,11 @@ func GetRequestID(ctx context.Context) (uuid.UUID, bool) {
 // GetDuration returns the amount of time since the Duration handler ran, or
 // 0 if no Duration was set for this context.
 func GetDuration(ctx context.Context) time.Duration {
-	t := GetStartTime(ctx)
-	if t.IsZero() {
+	t := getStartMono(ctx)
+	if t == 0 {
 		return time.Duration(0)
 	}
-	return time.Since(t)
+	return time.Duration(monotime.Now() - t)
 }
 
 // GetStartTime returns the time the Duration handler ran.
@@ -53,18 +55,29 @@ func GetStartTime(ctx context.Context) time.Time {
 	return time.Time{}
 }
 
-// Duration sets a the start time in the context and sets a X-Request-Duration
+// getStartMono returns the time the Duration handler ran.
+func getStartMono(ctx context.Context) uint64 {
+	val := ctx.Value(startMono)
+	if val != nil {
+		t := val.(uint64)
+		return t
+	}
+	return 0
+}
+
+// Duration sets the start time in the context and sets a X-Request-Duration
 // header on the response, from the time this handler started executing to the
 // time of the first WriteHeader() or Write() call.
 func Duration(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now().UTC()
 		sw := &startWriter{
 			w:           w,
-			start:       start,
+			start:       time.Now().UTC(),
+			monoStart:   monotime.Now(),
 			wroteHeader: false,
 		}
-		r = r.WithContext(context.WithValue(r.Context(), startTime, start))
+		r = r.WithContext(context.WithValue(r.Context(), startTime, sw.start))
+		r = r.WithContext(context.WithValue(r.Context(), startMono, sw.monoStart))
 		h.ServeHTTP(sw, r)
 	})
 }
