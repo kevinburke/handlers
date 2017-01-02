@@ -37,3 +37,20 @@ func TestRegexpHandler(t *testing.T) {
 		t.Errorf("Expected POST request to unknown route to return 404, got %d", w.Code)
 	}
 }
+
+func TestHeadAllowed(t *testing.T) {
+	t.Parallel()
+	// GET /v1/jobs/:job-name
+	route := regexp.MustCompile(`^/v1$`)
+
+	h := new(Regexp)
+	h.HandleFunc(route, []string{"GET", "POST"}, func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Hello World!"))
+	})
+	req, _ := http.NewRequest("HEAD", "/v1", nil)
+	w := httptest.NewRecorder()
+	h.ServeHTTP(w, req)
+	if w.Code != 200 {
+		t.Errorf("Expected HEAD request to return 200, got %d", w.Code)
+	}
+}

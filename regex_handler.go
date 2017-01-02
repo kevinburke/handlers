@@ -21,7 +21,8 @@ type Regexp struct {
 }
 
 // Handle calls the provided handler for requests whose URL matches the given
-// pattern and HTTP method. The first matching route will get called.
+// pattern and HTTP method. The first matching route will get called. If GET is
+// in the list of methods, HEAD requests will also be allowed.
 func (h *Regexp) Handle(pattern *regexp.Regexp, methods []string, handler http.Handler) {
 	h.routes = append(h.routes, &route{
 		pattern: pattern,
@@ -31,7 +32,8 @@ func (h *Regexp) Handle(pattern *regexp.Regexp, methods []string, handler http.H
 }
 
 // HandleFunc calls the provided HandlerFunc for requests whose URL matches the
-// given pattern and HTTP method. The first matching route will get called.
+// given pattern and HTTP method. The first matching route will get called. If
+// GET is in the list of methods, HEAD requests will also be allowed.
 func (h *Regexp) HandleFunc(pattern *regexp.Regexp, methods []string, handler func(http.ResponseWriter, *http.Request)) {
 	h.routes = append(h.routes, &route{
 		pattern: pattern,
@@ -40,15 +42,16 @@ func (h *Regexp) HandleFunc(pattern *regexp.Regexp, methods []string, handler fu
 	})
 }
 
-// ServeHTTP checks all registered routes in turn for a match, and
-// Scalls erveHTTP on the first matching handler. If no routes match,
+// ServeHTTP checks all registered routes in turn for a match, and calls
+// handler.ServeHTTP on the first matching handler. If no routes match,
 // StatusMethodNotAllowed will be rendered.
 func (h *Regexp) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	for _, route := range h.routes {
 		if route.pattern.MatchString(r.URL.Path) {
 			upperMethod := strings.ToUpper(r.Method)
 			for _, method := range route.methods {
-				if strings.ToUpper(method) == upperMethod {
+				upper := strings.ToUpper(method)
+				if upper == upperMethod || upperMethod == "HEAD" && upper == "GET" {
 					route.handler.ServeHTTP(w, r)
 					return
 				}
