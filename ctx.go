@@ -42,7 +42,7 @@ func GetDuration(ctx context.Context) time.Duration {
 	if t == 0 {
 		return time.Duration(0)
 	}
-	return time.Duration(monotime.Now() - t)
+	return monotime.Since(t)
 }
 
 // GetStartTime returns the time the Duration handler ran.

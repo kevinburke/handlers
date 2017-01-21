@@ -55,7 +55,7 @@ type startWriter struct {
 }
 
 func (s *startWriter) duration() string {
-	d := (time.Duration(monotime.Now()-s.monoStart) / (100 * time.Microsecond)) * (100 * time.Microsecond)
+	d := (monotime.Since(s.monoStart) / (100 * time.Microsecond)) * (100 * time.Microsecond)
 	return d.String()
 }
 
