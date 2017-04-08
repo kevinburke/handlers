@@ -179,6 +179,8 @@ func BasicAuth(h http.Handler, realm string, users map[string]string) http.Handl
 
 // Debug prints debugging information about the request to stdout if the
 // DEBUG_HTTP_TRAFFIC environment variable is set to true.
+//
+// Deprecated: Use github.com/kevinburke/rest.DefaultTransport instead.
 func Debug(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if os.Getenv("DEBUG_HTTP_TRAFFIC") == "true" {
