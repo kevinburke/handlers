@@ -361,3 +361,25 @@ func Log(h http.Handler) http.Handler {
 func WithLogger(h http.Handler, logger log.Logger) http.Handler {
 	return &logHandler{h, logger}
 }
+
+// RedirectProto redirects requests with an "X-Forwarded-Proto: http" header to
+// their HTTPS equivalent.
+func RedirectProto(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("X-Forwarded-Proto") == "http" {
+			r.URL.Scheme = "https"
+			r.URL.Host = r.Host
+			http.Redirect(w, r, r.URL.String(), http.StatusFound)
+			return
+		}
+		h.ServeHTTP(w, r)
+	})
+}
+
+// STS sets a Strict-Transport-Security header on the response.
+func STS(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Strict-Transport-Security", "max-age=31536000; preload")
+		h.ServeHTTP(w, r)
+	})
+}

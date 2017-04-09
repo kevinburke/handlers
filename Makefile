@@ -1,6 +1,8 @@
 BUMP_VERSION := $(shell command -v bump_version)
 STATICCHECK := $(shell command -v staticcheck)
 
+SHELL = /bin/bash
+
 vet:
 ifndef STATICCHECK
 	go get -u honnef.co/go/tools/cmd/staticcheck
