@@ -27,3 +27,7 @@ func (l *responseLogger) Push(target string, opts *http.PushOptions) error {
 func (s *serverWriter) Push(target string, opts *http.PushOptions) error {
 	return push(s.w, target, opts)
 }
+
+func (c *compressResponseWriter) Push(target string, opts *http.PushOptions) error {
+	return push(c.ResponseWriter, target, opts)
+}
