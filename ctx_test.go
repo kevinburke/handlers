@@ -93,7 +93,7 @@ func TestWithTimeout(t *testing.T) {
 		if !ok {
 			t.Error("expected Deadline() to be ok, got not ok")
 		}
-		if deadline.Sub(time.Now()) > 10*time.Millisecond {
+		if time.Until(deadline) > 10*time.Millisecond {
 			t.Errorf("too big of a deadline: %v", deadline)
 		}
 		w.WriteHeader(http.StatusBadRequest)

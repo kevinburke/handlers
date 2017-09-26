@@ -24,7 +24,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aristanetworks/goarista/monotime"
 	log "github.com/inconshreveable/log15"
 	"github.com/kevinburke/rest"
 	"github.com/satori/go.uuid"
@@ -43,42 +42,6 @@ func JSON(h http.Handler) http.Handler {
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		h.ServeHTTP(w, r)
 	})
-}
-
-// startWriter is used by Duration in ctx.go/noctx.go
-type startWriter struct {
-	w     http.ResponseWriter
-	start time.Time
-	// use this for durations
-	monoStart   uint64
-	wroteHeader bool
-}
-
-func (s *startWriter) duration() string {
-	d := (monotime.Since(s.monoStart) / (100 * time.Microsecond)) * (100 * time.Microsecond)
-	return d.String()
-}
-
-func (s *startWriter) WriteHeader(code int) {
-	if s.wroteHeader == false {
-		s.w.Header().Set("X-Request-Duration", s.duration())
-		s.wroteHeader = true
-	}
-	s.w.WriteHeader(code)
-}
-
-func (s *startWriter) Write(b []byte) (int, error) {
-	// Some chunked encoding transfers won't ever call WriteHeader(), so set
-	// the header here.
-	if s.wroteHeader == false {
-		s.w.Header().Set("X-Request-Duration", s.duration())
-		s.wroteHeader = true
-	}
-	return s.w.Write(b)
-}
-
-func (s *startWriter) Header() http.Header {
-	return s.w.Header()
 }
 
 type serverWriter struct {

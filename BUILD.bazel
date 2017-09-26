@@ -9,13 +9,11 @@ go_library(
         "gzip.go",
         "lib.go",
         "logger.go",
-        "noctx.go",
         "push.go",
         "regex_handler.go",
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "@com_github_aristanetworks_goarista//monotime:go_default_library",
         "@com_github_inconshreveable_log15//:go_default_library",
         "@com_github_inconshreveable_log15//term:go_default_library",
         "@com_github_kevinburke_rest//:go_default_library",
@@ -41,5 +39,5 @@ go_test(
     name = "go_default_xtest",
     timeout = "short",
     srcs = ["example_test.go"],
-    deps = ["//:go_default_library"],
+    deps = [":go_default_library"],
 )

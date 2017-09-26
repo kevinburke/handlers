@@ -1,7 +1,7 @@
 git_repository(
     name = "io_bazel_rules_go",
     remote = "https://github.com/bazelbuild/rules_go.git",
-    tag = "0.5.2",
+    tag = "0.5.5",
 )
 load("@io_bazel_rules_go//go:def.bzl", "go_prefix", "go_repositories", "go_repository")
 
@@ -33,12 +33,6 @@ go_repository(
     name = "com_github_go_stack_stack",
     importpath = "github.com/go-stack/stack",
     commit = "54be5f394ed2c3e19dac9134a40a95ba5a017f7b",
-)
-
-go_repository(
-    name = "com_github_aristanetworks_goarista",
-    importpath = "github.com/aristanetworks/goarista",
-    commit = "8ab803d6502ea1e05a8c9b73193b405291efb7ce",
 )
 
 go_repository(
