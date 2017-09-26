@@ -31,6 +31,13 @@ import (
 
 const Version = "0.30"
 
+func push(w http.ResponseWriter, target string, opts *http.PushOptions) error {
+	if pusher, ok := w.(http.Pusher); ok {
+		return pusher.Push(target, opts)
+	}
+	return http.ErrNotSupported
+}
+
 // All wraps h with every handler in this file.
 func All(h http.Handler, serverName string) http.Handler {
 	return Duration(Log(Debug(UUID(TrailingSlashRedirect(JSON(Server(h, serverName)))))))
@@ -68,6 +75,11 @@ func (s *serverWriter) Write(b []byte) (int, error) {
 
 func (s *serverWriter) Header() http.Header {
 	return s.w.Header()
+}
+
+// Push implements the http.Pusher interface.
+func (s *serverWriter) Push(target string, opts *http.PushOptions) error {
+	return push(s.w, target, opts)
 }
 
 // TrailingSlashRedirect redirects any path that ends with a "/" - say,
@@ -221,6 +233,11 @@ func (l *responseLogger) Flush() {
 	if ok {
 		f.Flush()
 	}
+}
+
+// Push implements the http.Pusher interface.
+func (l *responseLogger) Push(target string, opts *http.PushOptions) error {
+	return push(l.w, target, opts)
 }
 
 type hijackLogger struct {

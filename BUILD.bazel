@@ -9,7 +9,6 @@ go_library(
         "gzip.go",
         "lib.go",
         "logger.go",
-        "push.go",
         "regex_handler.go",
     ],
     visibility = ["//visibility:public"],

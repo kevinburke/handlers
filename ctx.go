@@ -1,5 +1,3 @@
-// +build go1.7
-
 package handlers
 
 import (
@@ -94,6 +92,11 @@ func (s *startWriter) Write(b []byte) (int, error) {
 
 func (s *startWriter) Header() http.Header {
 	return s.w.Header()
+}
+
+// Push implements the http.Pusher interface.
+func (s *startWriter) Push(target string, opts *http.PushOptions) error {
+	return push(s.w, target, opts)
 }
 
 // Duration sets the start time in the context and sets a X-Request-Duration
