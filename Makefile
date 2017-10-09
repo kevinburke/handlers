@@ -1,7 +1,10 @@
+SHELL = /bin/bash -o pipefail
+
 BUMP_VERSION := $(GOPATH)/bin/bump_version
 MEGACHECK := $(GOPATH)/bin/megacheck
 
-SHELL = /bin/bash -o pipefail
+BAZEL_VERSION := 0.6.1
+BAZEL_DEB := bazel_$(BAZEL_VERSION)_amd64.deb
 
 vet: | $(MEGACHECK)
 	go vet ./...
@@ -25,11 +28,15 @@ $(BUMP_VERSION):
 release: race-test | $(BUMP_VERSION)
 	bump_version minor lib.go
 
+install-travis:
+	wget "https://storage.googleapis.com/bazel-apt/pool/jdk1.8/b/bazel/$(BAZEL_DEB)"
+	sudo dpkg --force-all -i $(BAZEL_DEB)
+	sudo apt-get install moreutils -y
+
 ci:
 	bazel --batch --host_jvm_args=-Dbazel.DigestFunction=SHA1 test \
 		--experimental_repository_cache="$$HOME/.bzrepos" \
 		--spawn_strategy=remote \
-		--remote_rest_cache=https://remote.rest.stackmachine.com/cache \
 		--test_output=errors \
 		--strategy=Javac=remote \
 		--noshow_progress \
