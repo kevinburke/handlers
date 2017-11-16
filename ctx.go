@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"net/http"
+	"strings"
 	"time"
 
 	uuid "github.com/satori/go.uuid"
@@ -68,8 +69,8 @@ type startWriter struct {
 }
 
 func (s *startWriter) duration() string {
-	d := time.Since(s.start)%(100*time.Microsecond) + 100*time.Microsecond
-	return d.String()
+	d := time.Since(s.start) / (100 * time.Microsecond) * 100 * time.Microsecond
+	return strings.Replace(d.String(), "µ", "u", 1)
 }
 
 func (s *startWriter) WriteHeader(code int) {

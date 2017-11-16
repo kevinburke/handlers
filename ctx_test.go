@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -55,6 +56,9 @@ func TestGetDuration(t *testing.T) {
 	dur, err := time.ParseDuration(w.Header().Get("X-Request-Duration"))
 	if err != nil {
 		t.Fatal(err)
+	}
+	if !strings.Contains(dur.String(), "ms") {
+		t.Errorf("expected dur to contain 'ms', got %s", dur.String())
 	}
 	if dur == 0 {
 		t.Errorf("got 0 duration, wanted a greater than 0 duration")
