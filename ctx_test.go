@@ -12,14 +12,14 @@ import (
 
 func TestGetRequestID(t *testing.T) {
 	t.Parallel()
-	req, _ := http.NewRequest("GET", "/", nil)
+	req := httptest.NewRequest("GET", "/", nil)
 	u := uuid.NewV4()
 	_, ok := GetRequestID(req.Context())
 	if ok != false {
 		t.Error("expected request id get to return false, got true")
 	}
-	req = SetRequestID(req, u)
-	uid, ok := GetRequestID(req.Context())
+	r2 := SetRequestID(req, u)
+	uid, ok := GetRequestID(r2.Context())
 	if !ok {
 		t.Error("expected request id get to return true, got false")
 	}
