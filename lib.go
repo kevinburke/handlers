@@ -29,7 +29,7 @@ import (
 	"github.com/satori/go.uuid"
 )
 
-const Version = "0.33"
+const Version = "0.34"
 
 func push(w http.ResponseWriter, target string, opts *http.PushOptions) error {
 	if pusher, ok := w.(http.Pusher); ok {
