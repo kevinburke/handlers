@@ -48,13 +48,16 @@ func (h *Regexp) HandleFunc(pattern *regexp.Regexp, methods []string, handler fu
 // handler.ServeHTTP on the first matching handler. If no routes match,
 // StatusMethodNotAllowed will be rendered.
 func (h *Regexp) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	upperMethod := strings.ToUpper(r.Method)
+	allowed := make([]string, 0)
+	oneMatch := false
 	for _, route := range h.routes {
 		if route.pattern.MatchString(r.URL.Path) {
+			oneMatch = true
 			if route.methods == nil {
 				route.handler.ServeHTTP(w, r)
 				return
 			}
-			upperMethod := strings.ToUpper(r.Method)
 			for _, method := range route.methods {
 				upper := strings.ToUpper(method)
 				if upper == upperMethod || upperMethod == "HEAD" && upper == "GET" {
@@ -63,14 +66,18 @@ func (h *Regexp) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 			if upperMethod == "OPTIONS" {
-				methods := strings.Join(append(route.methods, "OPTIONS"), ", ")
-				w.Header().Set("Allow", methods)
-			} else {
-				rest.NotAllowed(w, r)
-				return
+				allowed = append(allowed, route.methods...)
 			}
-			return
 		}
 	}
-	rest.NotFound(w, r)
+	if upperMethod == "OPTIONS" {
+		methods := strings.Join(append(allowed, "OPTIONS"), ", ")
+		w.Header().Set("Allow", methods)
+		return
+	}
+	if oneMatch {
+		rest.NotAllowed(w, r)
+	} else {
+		rest.NotFound(w, r)
+	}
 }

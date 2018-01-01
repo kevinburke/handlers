@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"regexp"
@@ -14,7 +15,7 @@ func TestRegexpHandler(t *testing.T) {
 
 	h := new(Regexp)
 	h.HandleFunc(route, []string{"GET", "POST"}, func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello World!"))
+		io.WriteString(w, "Hello World!")
 	})
 	req, _ := http.NewRequest("GET", "/v1", nil)
 	w := httptest.NewRecorder()
@@ -44,7 +45,7 @@ func TestHeadAllowed(t *testing.T) {
 
 	h := new(Regexp)
 	h.HandleFunc(route, []string{"GET", "POST"}, func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello World!"))
+		io.WriteString(w, "Hello World!")
 	})
 	req := httptest.NewRequest("HEAD", "/v1", nil)
 	w := httptest.NewRecorder()
@@ -60,12 +61,33 @@ func TestNil(t *testing.T) {
 
 	h := new(Regexp)
 	h.HandleFunc(route, nil, func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello World!"))
+		io.WriteString(w, "Hello World!")
 	})
 	req := httptest.NewRequest("PATCH", "/v1", nil)
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, req)
 	if w.Code != 200 {
 		t.Errorf("Expected HEAD request to return 200, got %d", w.Code)
+	}
+}
+
+func TestMatchingRoutes(t *testing.T) {
+	t.Parallel()
+	route := regexp.MustCompile(`^/v1$`)
+	h := new(Regexp)
+	h.HandleFunc(route, []string{"GET"}, func(w http.ResponseWriter, r *http.Request) {
+		io.WriteString(w, "Hello Get World!")
+	})
+	h.HandleFunc(route, []string{"POST"}, func(w http.ResponseWriter, r *http.Request) {
+		io.WriteString(w, "Hello Post World!")
+	})
+	req := httptest.NewRequest("POST", "/v1", nil)
+	w := httptest.NewRecorder()
+	h.ServeHTTP(w, req)
+	if w.Code != 200 {
+		t.Errorf("Expected POST request to return 200, got %d", w.Code)
+	}
+	if w.Body.String() != "Hello Post World!" {
+		t.Errorf("Expected POST request to return body, got %s", w.Body)
 	}
 }
