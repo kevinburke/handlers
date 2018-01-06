@@ -17,21 +17,21 @@ func TestRegexpHandler(t *testing.T) {
 	h.HandleFunc(route, []string{"GET", "POST"}, func(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, "Hello World!")
 	})
-	req, _ := http.NewRequest("GET", "/v1", nil)
+	req := httptest.NewRequest("GET", "/v1", nil)
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, req)
 	if w.Body.String() != "Hello World!" {
 		t.Errorf("expected Body to equal 'Hello World!', got %v", w.Body.String())
 	}
 
-	req, _ = http.NewRequest("PATCH", "/v1", nil)
+	req = httptest.NewRequest("PATCH", "/v1", nil)
 	w = httptest.NewRecorder()
 	h.ServeHTTP(w, req)
 	if w.Code != 405 {
 		t.Errorf("Expected PATCH request to return 405, got %d", w.Code)
 	}
 
-	req, _ = http.NewRequest("POST", "/unknown", nil)
+	req = httptest.NewRequest("POST", "/unknown", nil)
 	w = httptest.NewRecorder()
 	h.ServeHTTP(w, req)
 	if w.Code != 404 {

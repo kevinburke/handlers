@@ -2,6 +2,7 @@ package handlers_test
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"regexp"
@@ -12,7 +13,7 @@ import (
 func Example() {
 	mux := http.NewServeMux()
 	h := handlers.Duration(handlers.Server(mux, "custom-server"))
-	req, _ := http.NewRequest("GET", "/", nil)
+	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, req)
 	fmt.Println(w.Header().Get("Server"))
@@ -25,6 +26,6 @@ func ExampleRegexp() {
 
 	h := new(handlers.Regexp)
 	h.HandleFunc(route, []string{"GET", "POST"}, func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello World!"))
+		io.WriteString(w, "Hello World!")
 	})
 }

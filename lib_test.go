@@ -18,10 +18,7 @@ func (ts testServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func TestJSON(t *testing.T) {
 	t.Parallel()
 	w := httptest.NewRecorder()
-	req, err := http.NewRequest("GET", "/", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+	req := httptest.NewRequest("GET", "/", nil)
 	ts := testServer(false)
 	JSON(ts).ServeHTTP(w, req)
 	if w.Code != 200 {
@@ -38,10 +35,7 @@ func TestJSON(t *testing.T) {
 func TestServer(t *testing.T) {
 	t.Parallel()
 	w := httptest.NewRecorder()
-	req, err := http.NewRequest("GET", "/", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+	req := httptest.NewRequest("GET", "/", nil)
 	ts := testServer(false)
 	Server(ts, "foo bar").ServeHTTP(w, req)
 	if w.Header().Get("Server") != "foo bar" {
@@ -52,10 +46,7 @@ func TestServer(t *testing.T) {
 func TestServerOverwritesInnerHeaders(t *testing.T) {
 	t.Parallel()
 	w := httptest.NewRecorder()
-	req, err := http.NewRequest("GET", "/", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+	req := httptest.NewRequest("GET", "/", nil)
 	sh := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Server", "Inner header!")
 		testServer(false).ServeHTTP(w, r)
@@ -69,10 +60,7 @@ func TestServerOverwritesInnerHeaders(t *testing.T) {
 func TestAll(t *testing.T) {
 	t.Parallel()
 	w := httptest.NewRecorder()
-	req, err := http.NewRequest("GET", "/", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+	req := httptest.NewRequest("GET", "/", nil)
 	ts := testServer(false)
 	All(ts, "foo bar").ServeHTTP(w, req)
 	if w.Header().Get("Server") != "foo bar" {
@@ -85,14 +73,14 @@ func TestAll(t *testing.T) {
 
 func TestTrailingSlashRedirect(t *testing.T) {
 	t.Parallel()
-	req, _ := http.NewRequest("GET", "/", nil)
+	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
 	ts := TrailingSlashRedirect(testServer(false))
 	ts.ServeHTTP(w, req)
 	if w.Code != 200 {
 		t.Errorf("expected Code to be 200, got %d", w.Code)
 	}
-	req, _ = http.NewRequest("GET", "/trailingslash//////", nil)
+	req = httptest.NewRequest("GET", "/trailingslash//////", nil)
 	w = httptest.NewRecorder()
 	ts.ServeHTTP(w, req)
 	if w.Code != 301 {
@@ -102,7 +90,7 @@ func TestTrailingSlashRedirect(t *testing.T) {
 	if location != "/trailingslash/" {
 		t.Errorf("expected Location header to be /trailingslash/, got %s", location)
 	}
-	req, _ = http.NewRequest("GET", "/trailingslash/", nil)
+	req = httptest.NewRequest("GET", "/trailingslash/", nil)
 	w = httptest.NewRecorder()
 	ts.ServeHTTP(w, req)
 	location = w.Header().Get("Location")

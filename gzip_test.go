@@ -147,10 +147,7 @@ func TestCompressHandlerPreserveInterfaces(t *testing.T) {
 	var (
 		rw fullyFeaturedResponseWriter
 	)
-	r, err := http.NewRequest("GET", "/", nil)
-	if err != nil {
-		t.Fatalf("Failed to create test request: %v", err)
-	}
+	r := httptest.NewRequest("GET", "/", nil)
 	r.Header.Set("Accept-Encoding", "gzip")
 	h.ServeHTTP(rw, r)
 
