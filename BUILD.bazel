@@ -19,9 +19,9 @@ go_library(
     deps = [
         "@com_github_inconshreveable_log15//:go_default_library",
         "@com_github_inconshreveable_log15//term:go_default_library",
+        "@com_github_kevinburke_go_uuid//:go_default_library",
         "@com_github_kevinburke_rest//:go_default_library",
         "@com_github_mattn_go_colorable//:go_default_library",
-        "@com_github_satori_go_uuid//:go_default_library",
     ],
 )
 
@@ -34,9 +34,9 @@ go_test(
         "lib_test.go",
         "regex_handler_test.go",
     ],
+    embed = [":go_default_library"],
     importpath = "github.com/kevinburke/handlers",
-    library = ":go_default_library",
-    deps = ["@com_github_satori_go_uuid//:go_default_library"],
+    deps = ["@com_github_kevinburke_go_uuid//:go_default_library"],
 )
 
 go_test(

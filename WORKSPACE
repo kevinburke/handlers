@@ -9,9 +9,9 @@ go_rules_dependencies()
 go_register_toolchains()
 
 go_repository(
-    name = "com_github_satori_go_uuid",
-    importpath = "github.com/satori/go.uuid",
-    commit = "5bf94b69c6b68ee1b541973bb8e1144db23a194b",
+    name = "com_github_kevinburke_go_uuid",
+    importpath = "github.com/kevinburke/go.uuid",
+    commit = "24443c65ec63d9e040fd4cedf0f1048b5d3544f7",
 )
 
 go_repository(

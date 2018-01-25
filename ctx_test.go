@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	uuid "github.com/satori/go.uuid"
+	uuid "github.com/kevinburke/go.uuid"
 )
 
 func TestGetRequestID(t *testing.T) {

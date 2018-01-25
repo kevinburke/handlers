@@ -25,8 +25,8 @@ import (
 	"time"
 
 	log "github.com/inconshreveable/log15"
+	"github.com/kevinburke/go.uuid"
 	"github.com/kevinburke/rest"
-	"github.com/satori/go.uuid"
 )
 
 const Version = "0.35"
