@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"regexp"
+	"strings"
 	"testing"
 )
 
@@ -89,5 +90,25 @@ func TestMatchingRoutes(t *testing.T) {
 	}
 	if w.Body.String() != "Hello Post World!" {
 		t.Errorf("Expected POST request to return body, got %s", w.Body)
+	}
+}
+
+func TestOptionsNil(t *testing.T) {
+	t.Parallel()
+	route := regexp.MustCompile(`^/v1$`)
+
+	h := new(Regexp)
+	h.HandleFunc(route, nil, func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(403)
+		io.WriteString(w, "Hello World!")
+	})
+	req := httptest.NewRequest("OPTIONS", "/v1", nil)
+	w := httptest.NewRecorder()
+	h.ServeHTTP(w, req)
+	if w.Code != 200 {
+		t.Errorf("Expected %s request to return 200, got %d", req.Method, w.Code)
+	}
+	if !strings.Contains(w.Header().Get("Allow"), "CONNECT") {
+		t.Errorf("Expected ALLOW header to contain list of methods, got %q", w.Header().Get("Allow"))
 	}
 }
