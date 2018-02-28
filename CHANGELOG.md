@@ -1,3 +1,7 @@
+### 0.37
+
+Support OPTIONS queries with a nil route.
+
 ### 0.35
 
 If two paths are declared that both match a given path, we'll try both of them
