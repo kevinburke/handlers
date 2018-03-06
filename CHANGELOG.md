@@ -1,3 +1,8 @@
+### 0.38
+
+If WriteHeader is never called, Log will log status=200 to the log, instead of
+status=0.
+
 ### 0.37
 
 Support OPTIONS queries with a nil route.
