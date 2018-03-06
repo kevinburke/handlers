@@ -221,6 +221,9 @@ func (l *responseLogger) WriteHeader(s int) {
 }
 
 func (l *responseLogger) Status() int {
+	if l.status == 0 {
+		return http.StatusOK // default status
+	}
 	return l.status
 }
 
