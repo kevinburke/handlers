@@ -103,6 +103,10 @@ func Server(h http.Handler, serverName string) http.Handler {
 			wroteHeader: false,
 		}
 		h.ServeHTTP(sw, r)
+		if sw.wroteHeader == false {
+			sw.w.Header().Set("Server", sw.name)
+			sw.wroteHeader = true
+		}
 	})
 }
 

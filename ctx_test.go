@@ -107,3 +107,16 @@ func TestWithTimeout(t *testing.T) {
 		t.Errorf("expected Code to be 400, got %d", w.Code)
 	}
 }
+
+func TestDurationWriteNeverCalled(t *testing.T) {
+	h := Duration(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// ensure we don't round down to 0
+		time.Sleep(1 * time.Millisecond)
+	}))
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest("GET", "/", nil)
+	h.ServeHTTP(w, req)
+	if hdr := w.Header().Get("X-Request-Duration"); hdr == "" {
+		t.Errorf("no X-Request-Duration header, all headers: %#v", w.Header())
+	}
+}

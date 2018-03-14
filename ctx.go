@@ -116,6 +116,11 @@ func Duration(h http.Handler) http.Handler {
 		*r2 = *r
 		r2 = r2.WithContext(context.WithValue(r2.Context(), startTime, sw.start))
 		h.ServeHTTP(sw, r2)
+		if sw.wroteHeader == false {
+			// never called Write() or WriteHeader()
+			sw.w.Header().Set("X-Request-Duration", sw.duration())
+			sw.wroteHeader = true
+		}
 	})
 }
 
