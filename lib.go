@@ -29,7 +29,7 @@ import (
 	"github.com/kevinburke/rest"
 )
 
-const Version = "0.38"
+const Version = "0.39"
 
 func push(w http.ResponseWriter, target string, opts *http.PushOptions) error {
 	if pusher, ok := w.(http.Pusher); ok {
