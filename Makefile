@@ -20,7 +20,7 @@ install:
 	go install ./...
 
 $(BUMP_VERSION):
-	go get github.com/Shyp/bump_version
+	go get github.com/kevinburke/bump_version
 
 release: race-test | $(BUMP_VERSION)
 	$(BUMP_VERSION) minor lib.go
