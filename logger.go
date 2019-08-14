@@ -96,7 +96,10 @@ func termFormat() log15.Format {
 		b := new(bytes.Buffer)
 		lvl := strings.ToUpper(r.Lvl.String())
 		if color > 0 {
-			fmt.Fprintf(b, "\x1b[%dm%s\x1b[0m[%s] %s ", color, lvl, r.Time.Format(termTimeFormat), r.Msg)
+			if r.Msg != "" && !strings.HasSuffix(r.Msg, " ") {
+				r.Msg = r.Msg + " "
+			}
+			fmt.Fprintf(b, "\x1b[%dm%s\x1b[0m[%s] %s", color, lvl, r.Time.Format(termTimeFormat), r.Msg)
 		} else {
 			fmt.Fprintf(b, "[%s] [%s] %s ", lvl, r.Time.Format(termTimeFormat), r.Msg)
 		}
