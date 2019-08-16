@@ -126,8 +126,6 @@ func Duration(h http.Handler) http.Handler {
 
 // WithTimeout sets the given timeout in the Context of every incoming request
 // before passing it to the next handler.
-//
-// WithTimeout is only available for Go 1.7 and above.
 func WithTimeout(h http.Handler, timeout time.Duration) http.Handler {
 	if timeout < 0 {
 		panic("invalid timeout (negative number)")
