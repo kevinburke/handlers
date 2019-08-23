@@ -18,9 +18,9 @@ import (
 	"time"
 
 	"github.com/inconshreveable/log15"
-	"github.com/inconshreveable/log15/term"
 	"github.com/kevinburke/rest"
 	"github.com/mattn/go-colorable"
+	"github.com/mattn/go-isatty"
 )
 
 const termTimeFormat = "15:04:05.000-07:00"
@@ -51,7 +51,7 @@ func NewLogger() log15.Logger {
 func NewLoggerLevel(lvl log15.Lvl) log15.Logger {
 	l := log15.New()
 	var h log15.Handler
-	if term.IsTty(os.Stdout.Fd()) {
+	if isatty.IsTerminal(os.Stdout.Fd()) {
 		h = log15.StreamHandler(colorable.NewColorableStdout(), termFormat())
 	} else {
 		h = log15.StreamHandler(os.Stdout, logfmtFormat())
