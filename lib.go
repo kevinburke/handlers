@@ -58,6 +58,7 @@ type serverWriter struct {
 }
 
 func (s *serverWriter) WriteHeader(code int) {
+	//lint:ignore S1002 prefer it this way
 	if s.wroteHeader == false {
 		s.w.Header().Set("Server", s.name)
 		s.wroteHeader = true
@@ -66,6 +67,7 @@ func (s *serverWriter) WriteHeader(code int) {
 }
 
 func (s *serverWriter) Write(b []byte) (int, error) {
+	//lint:ignore S1002 prefer it this way
 	if s.wroteHeader == false {
 		s.w.Header().Set("Server", s.name)
 		s.wroteHeader = true
@@ -103,6 +105,7 @@ func Server(h http.Handler, serverName string) http.Handler {
 			wroteHeader: false,
 		}
 		h.ServeHTTP(sw, r)
+		//lint:ignore S1002 prefer it this way
 		if sw.wroteHeader == false {
 			sw.w.Header().Set("Server", sw.name)
 			sw.wroteHeader = true
