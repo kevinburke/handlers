@@ -165,7 +165,7 @@ var envFunc = os.Getenv
 // DEBUG_HTTP_TRAFFIC environment variable is set to "true".
 func DebugWriter(h http.Handler, output io.Writer) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if envFunc("DEBUG_HTTP_TRAFFIC") != "true" {
+		if envFunc("DEBUG_HTTP_TRAFFIC") != "true" && envFunc("DEBUG_HTTP_SERVER_TRAFFIC") != "true" {
 			h.ServeHTTP(w, r)
 			return
 		}

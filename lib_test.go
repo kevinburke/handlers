@@ -106,7 +106,12 @@ func TestTrailingSlashRedirect(t *testing.T) {
 }
 
 func TestDebugGzip(t *testing.T) {
-	envFunc = func(s string) string { return "true" }
+	envFunc = func(s string) string {
+		if s == "DEBUG_HTTP_SERVER_TRAFFIC" {
+			return "true"
+		}
+		return ""
+	}
 	defer func() { envFunc = os.Getenv }()
 	h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		resp := strings.Repeat("a", 2000)
