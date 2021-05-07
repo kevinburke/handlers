@@ -11,7 +11,7 @@ test: vet
 
 install-ci:
 	go get honnef.co/go/tools/cmd/staticcheck
-	go get -u -t ./...
+	go get -t ./...
 
 ci: install-ci vet race-test
 

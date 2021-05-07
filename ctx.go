@@ -13,6 +13,7 @@ type ctxVar int
 
 var requestID ctxVar = 0
 var startTime ctxVar = 1
+var extraLog ctxVar = 2
 
 // SetRequestID sets the given UUID on the request context and returns the
 // modified HTTP request.

@@ -12,6 +12,7 @@ package handlers
 
 import (
 	"bytes"
+	"context"
 	"crypto/subtle"
 	"fmt"
 	"io"
@@ -22,6 +23,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	log "github.com/inconshreveable/log15"
@@ -288,6 +290,7 @@ func (l logHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	t := time.Now()
 	logWriter := makeLogger(w)
 	u := *r.URL
+	r = r.WithContext(context.WithValue(r.Context(), extraLog, &logHolder{}))
 	l.h.ServeHTTP(logWriter, r)
 	writeLog(l.l, r, u, t, logWriter.Status(), logWriter.Size())
 }
@@ -325,7 +328,34 @@ func writeLog(l log.Logger, r *http.Request, u url.URL, t time.Time, status int,
 	if id := r.Header.Get("X-Request-Id"); id != "" {
 		args = append(args, "request_id", id)
 	}
+	holder := r.Context().Value(extraLog).(*logHolder)
+	args = append(args, holder.logs...)
 	l.Info("", args...)
+}
+
+type logHolder struct {
+	mu   sync.Mutex
+	logs []interface{}
+}
+
+// Append will append the logctx arguments to the log line for this request.
+// The logctx arguments should come in pairs and match those provided to a
+// log15.Logger.
+func AppendLog(r *http.Request, logctx ...interface{}) {
+	val := r.Context().Value(extraLog)
+	if val == nil {
+		// This should always be set by logHandler.ServeHTTP; if it's not set it
+		// means you're trying to append to something that was not wrapped with
+		// Log or WithLogger().
+		panic("handlers internal error; cannot append log context to nil logger")
+	}
+	holder := val.(*logHolder)
+	holder.mu.Lock()
+	defer holder.mu.Unlock()
+	if holder.logs == nil {
+		holder.logs = make([]interface{}, 0)
+	}
+	holder.logs = append(holder.logs, logctx...)
 }
 
 // Log serves the http request and writes information about the
