@@ -344,10 +344,13 @@ type logHolder struct {
 func AppendLog(r *http.Request, logctx ...interface{}) {
 	val := r.Context().Value(extraLog)
 	if val == nil {
-		// This should always be set by logHandler.ServeHTTP; if it's not set it
-		// means you're trying to append to something that was not wrapped with
-		// Log or WithLogger().
-		panic("handlers internal error; cannot append log context to nil logger")
+		// This should always be set by logHandler.ServeHTTP; if it's not set,
+		// it means you're trying to append to something that was not wrapped
+		// with Log or WithLogger().
+		//
+		// In practice, it's not uncommon in places like tests or sub-routers to
+		// not have this value set, so silently ignore it for now.
+		return
 	}
 	holder := val.(*logHolder)
 	holder.mu.Lock()
