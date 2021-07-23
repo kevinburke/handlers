@@ -26,8 +26,8 @@ import (
 	"sync"
 	"time"
 
+	uuid "github.com/gofrs/uuid"
 	log "github.com/inconshreveable/log15"
-	uuid "github.com/kevinburke/go.uuid"
 	"github.com/kevinburke/rest"
 	"github.com/kevinburke/rest/resterror"
 )
@@ -122,7 +122,8 @@ func UUID(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		rid := r.Header.Get("X-Request-Id")
 		if rid == "" {
-			r = SetRequestID(r, uuid.NewV4())
+			id, _ := uuid.NewV4()
+			r = SetRequestID(r, id)
 		}
 		h.ServeHTTP(w, r)
 	})

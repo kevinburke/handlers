@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	uuid "github.com/kevinburke/go.uuid"
+	"github.com/gofrs/uuid"
 )
 
 type ctxVar int

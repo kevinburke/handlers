@@ -7,13 +7,13 @@ import (
 	"testing"
 	"time"
 
-	uuid "github.com/kevinburke/go.uuid"
+	uuid "github.com/gofrs/uuid"
 )
 
 func TestGetRequestID(t *testing.T) {
 	t.Parallel()
 	req := httptest.NewRequest("GET", "/", nil)
-	u := uuid.NewV4()
+	u, _ := uuid.NewV4()
 	_, ok := GetRequestID(req.Context())
 	if ok != false {
 		t.Error("expected request id get to return false, got true")
@@ -71,7 +71,7 @@ func TestGetDuration(t *testing.T) {
 func TestSetRequestID(t *testing.T) {
 	t.Parallel()
 	req := httptest.NewRequest("GET", "/", nil)
-	u := uuid.NewV4()
+	u, _ := uuid.NewV4()
 	req = SetRequestID(req, u)
 	rid := req.Header.Get("X-Request-Id")
 	if rid != u.String() {
