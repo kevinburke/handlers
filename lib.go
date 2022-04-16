@@ -319,6 +319,7 @@ func writeLog(l log.Logger, r *http.Request, u url.URL, t time.Time, status int,
 		"time", strconv.FormatInt(timeSinceMs(t), 10),
 		"bytes", strconv.Itoa(size),
 		"status", strconv.Itoa(status),
+		// Set X-Forwarded-For to pass through headers from a proxy.
 		"remote_addr", getRemoteIP(r),
 		"host", r.Host,
 		"user_agent", r.UserAgent(),
