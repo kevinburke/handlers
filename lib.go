@@ -32,7 +32,7 @@ import (
 	"github.com/kevinburke/rest/resterror"
 )
 
-const Version = "0.42"
+const Version = "0.43"
 
 func push(w http.ResponseWriter, target string, opts *http.PushOptions) error {
 	if pusher, ok := w.(http.Pusher); ok {
