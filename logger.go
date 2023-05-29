@@ -66,7 +66,7 @@ func NewLoggerLevel(lvl log15.Lvl) log15.Logger {
 // For more details see: http://godoc.org/github.com/kr/logfmt
 func logfmtFormat() log15.Format {
 	return log15.FormatFunc(func(r *log15.Record) []byte {
-		common := []interface{}{r.KeyNames.Time, r.Time, r.KeyNames.Lvl, r.Lvl}
+		common := []interface{}{r.KeyNames.Time, r.Time.Format(termTimeFormat), r.KeyNames.Lvl, r.Lvl}
 		if len(r.Msg) > 0 {
 			common = append(common, r.KeyNames.Msg, r.Msg)
 		}
