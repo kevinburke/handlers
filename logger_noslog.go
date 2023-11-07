@@ -1,3 +1,6 @@
+//go:build !go1.21
+// +build !go1.21
+
 // Most of this is copied from github.com/inconshreveable/log15/format.go, with
 // some changes:
 //
@@ -18,26 +21,17 @@ import (
 	"time"
 
 	"github.com/inconshreveable/log15"
-	"github.com/kevinburke/rest"
 	"github.com/mattn/go-colorable"
 	"golang.org/x/term"
 )
 
+var errorKey = "HANDLER_ERROR"
+
+const timeFormat = "2006-01-02T15:04:05.000000-07:00"
 const termTimeFormat = "15:04:05.000-07:00"
 const termDateTimeFormat = "2006-01-02T15:04:05.000-07:00"
-const timeFormat = "2006-01-02T15:04:05.000000-07:00"
 
 const floatFormat = 'f'
-
-// Logger is a logger configured to avoid the 40-char spacing gap between the
-// message and the first key, and to write timestamps with full nanosecond
-// precision.
-var Logger log15.Logger
-
-func init() {
-	Logger = NewLogger()
-	rest.Logger = Logger
-}
 
 // NewLogger returns a new customizable Logger, with the same initial settings
 // as the package Logger. Compared with a default log15.Logger, the 40-char
@@ -108,31 +102,6 @@ func termFormat() log15.Format {
 		logfmt(b, r.Ctx, color)
 		return b.Bytes()
 	})
-}
-
-var errorKey = "HANDLER_ERROR"
-
-func logfmt(buf *bytes.Buffer, ctx []interface{}, color int) {
-	for i := 0; i < len(ctx); i += 2 {
-		if i != 0 {
-			buf.WriteByte(' ')
-		}
-
-		k, ok := ctx[i].(string)
-		v := formatLogfmtValue(ctx[i+1])
-		if !ok {
-			k, v = errorKey, formatLogfmtValue(k)
-		}
-
-		// XXX: we should probably check that all of your key bytes aren't invalid
-		if color > 0 {
-			fmt.Fprintf(buf, "\x1b[%dm%s\x1b[0m=%s", color, k, v)
-		} else {
-			fmt.Fprintf(buf, "%s=%s", k, v)
-		}
-	}
-
-	buf.WriteByte('\n')
 }
 
 // formatValue formats a value for serialization
@@ -216,4 +185,27 @@ func escapeString(s string) string {
 		start, stop = 1, stop-1
 	}
 	return string(e.Bytes()[start:stop])
+}
+
+func logfmt(buf *bytes.Buffer, ctx []interface{}, color int) {
+	for i := 0; i < len(ctx); i += 2 {
+		if i != 0 {
+			buf.WriteByte(' ')
+		}
+
+		k, ok := ctx[i].(string)
+		v := formatLogfmtValue(ctx[i+1])
+		if !ok {
+			k, v = errorKey, formatLogfmtValue(k)
+		}
+
+		// XXX: we should probably check that all of your key bytes aren't invalid
+		if color > 0 {
+			fmt.Fprintf(buf, "\x1b[%dm%s\x1b[0m=%s", color, k, v)
+		} else {
+			fmt.Fprintf(buf, "%s=%s", k, v)
+		}
+	}
+
+	buf.WriteByte('\n')
 }
