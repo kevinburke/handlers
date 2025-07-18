@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	log "github.com/inconshreveable/log15"
+	log "github.com/inconshreveable/log15/v3"
 )
 
 func TestLog(t *testing.T) {

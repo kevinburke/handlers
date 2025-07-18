@@ -20,7 +20,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/inconshreveable/log15"
+	"github.com/inconshreveable/log15/v3"
 	"github.com/mattn/go-colorable"
 	"golang.org/x/term"
 )
