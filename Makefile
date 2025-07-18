@@ -10,8 +10,15 @@ test: vet
 	go test -timeout=10s ./...
 
 install-ci:
-	go get honnef.co/go/tools/cmd/staticcheck
-	go get -t ./...
+	GO111MODULE=on go install honnef.co/go/tools/cmd/staticcheck@latest
+	GO111MODULE=on go install github.com/kevinburke/goget@latest
+	goget -https github.com/gofrs/uuid
+	goget -https github.com/inconshreveable/log15
+	goget -https github.com/kevinburke/rest
+	goget -https github.com/mattn/go-colorable
+	goget -https github.com/mattn/go-isatty
+	goget -https golang.org/x/term
+	goget -https golang.org/x/sys
 
 ci: install-ci vet race-test
 
