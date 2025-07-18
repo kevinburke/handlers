@@ -32,4 +32,4 @@ $(BUMP_VERSION):
 	go get github.com/kevinburke/bump_version
 
 release: race-test | $(BUMP_VERSION)
-	$(BUMP_VERSION) minor lib.go
+	$(BUMP_VERSION) --tag-prefix=v minor lib.go
