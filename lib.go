@@ -25,7 +25,7 @@ import (
 	"sync"
 	"time"
 
-	uuid "github.com/gofrs/uuid"
+	uuid "github.com/gofrs/uuid/v5"
 	"github.com/kevinburke/rest"
 	"github.com/kevinburke/rest/resterror"
 )
