@@ -16,6 +16,7 @@ import (
 	"crypto/subtle"
 	"fmt"
 	"io"
+	"maps"
 	"net/http"
 	"net/http/httptest"
 	"net/http/httputil"
@@ -189,9 +190,7 @@ func DebugWriter(h http.Handler, output io.Writer) http.Handler {
 
 		_, _ = b.WriteString(fmt.Sprintf("HTTP/1.1 %d\r\n", res.Code))
 		_ = res.Header().Write(b)
-		for k, v := range res.Header() {
-			w.Header()[k] = v
-		}
+		maps.Copy(w.Header(), res.Header())
 		w.WriteHeader(res.Code)
 		_, _ = b.WriteString("\r\n")
 		if w.Header().Get("Content-Encoding") == "gzip" {
@@ -306,13 +305,13 @@ func timeSinceMs(t time.Time) int64 {
 
 type logHolder struct {
 	mu   sync.Mutex
-	logs []interface{}
+	logs []any
 }
 
 // Append will append the logctx arguments to the log line for this request.
 // The logctx arguments should come in pairs and match those provided to a
 // log15.Logger.
-func AppendLog(r *http.Request, logctx ...interface{}) {
+func AppendLog(r *http.Request, logctx ...any) {
 	val := r.Context().Value(extraLog)
 	if val == nil {
 		// This should always be set by logHandler.ServeHTTP; if it's not set,
@@ -327,7 +326,7 @@ func AppendLog(r *http.Request, logctx ...interface{}) {
 	holder.mu.Lock()
 	defer holder.mu.Unlock()
 	if holder.logs == nil {
-		holder.logs = make([]interface{}, 0)
+		holder.logs = make([]any, 0)
 	}
 	holder.logs = append(holder.logs, logctx...)
 }

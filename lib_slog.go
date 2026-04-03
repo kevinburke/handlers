@@ -1,5 +1,4 @@
 //go:build go1.21
-// +build go1.21
 
 package handlers
 
@@ -35,7 +34,7 @@ func WithLogger(h http.Handler, logger *slog.Logger) http.Handler {
 
 func writeLog(l *slog.Logger, r *http.Request, u url.URL, t time.Time, status int, size int) {
 	user, _, _ := r.BasicAuth()
-	args := []interface{}{
+	args := []any{
 		"method", r.Method,
 		"path", r.URL.RequestURI(),
 		"time", strconv.FormatInt(timeSinceMs(t), 10),

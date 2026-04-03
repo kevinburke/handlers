@@ -20,7 +20,7 @@ func compressedRequest(w *httptest.ResponseRecorder, compression string) {
 	GZip(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Length", strconv.Itoa(9*1024))
 		w.Header().Set("Content-Type", contentType)
-		for i := 0; i < 1024; i++ {
+		for range 1024 {
 			io.WriteString(w, "Gorilla!\n")
 		}
 	})).ServeHTTP(w, &http.Request{

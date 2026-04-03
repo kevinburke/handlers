@@ -1,5 +1,4 @@
 //go:build !go1.21
-// +build !go1.21
 
 // Most of this is copied from github.com/inconshreveable/log15/format.go, with
 // some changes:
