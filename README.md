@@ -8,8 +8,7 @@ information and documentation.
 
 ## Versions
 
-`handlers` requires Go 1.8 or newer. Version 0.30 is the last version that works
-with versions older than Go 1.8.
+`handlers` requires Go 1.24 or newer.
 
 ## Donating
 

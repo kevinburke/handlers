@@ -4,7 +4,7 @@ jobs:
   test:
     strategy:
       matrix:
-        go-version: [1.22.x, 1.23.x, 1.24.x]
+        go-version: [1.24.x, 1.25.x, 1.26.x]
     runs-on: ubuntu-latest
     steps:
     - name: Install Go
@@ -12,13 +12,5 @@ jobs:
       with:
         go-version: ${{ matrix.go-version }}
     - uses: actions/checkout@v4
-      with:
-         path: './src/github.com/kevinburke/handlers'
-    # staticcheck needs this for GOPATH
-    - run: |
-        echo "GOPATH=$GITHUB_WORKSPACE" >> $GITHUB_ENV
-        echo "PATH=$GITHUB_WORKSPACE/bin:$PATH" >> $GITHUB_ENV
-        echo "GO111MODULE=off" >> $GITHUB_ENV
     - name: Run tests
       run: make ci
-      working-directory: './src/github.com/kevinburke/handlers'

@@ -78,7 +78,7 @@ func compressHandlerLevel(h http.Handler, level int) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	L:
-		for _, enc := range strings.Split(r.Header.Get("Accept-Encoding"), ",") {
+		for enc := range strings.SplitSeq(r.Header.Get("Accept-Encoding"), ",") {
 			switch strings.TrimSpace(enc) {
 			case "gzip":
 				w.Header().Set("Content-Encoding", "gzip")
