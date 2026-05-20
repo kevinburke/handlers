@@ -1,7 +1,7 @@
 github.com/gofrs/uuid/v5 v5.4.0 h1:EfbpCTjqMuGyq5ZJwxqzn3Cbr2d0rUZU7v5ycAk/e/0=
 github.com/gofrs/uuid/v5 v5.4.0/go.mod h1:CDOjlDMVAtN56jqyRUZh58JT31Tiw7/oQyEXZV+9bD8=
-github.com/inconshreveable/log15/v3 v3.1.0 h1:k2mDgq/cBXG0zfVwoDUGvZfel7r+cGD3/6+5cFhM0Zg=
-github.com/inconshreveable/log15/v3 v3.1.0/go.mod h1:wBTTBTUs5OkuP5707+qsSwdJidDzxReILCwJgEb8lN8=
+github.com/inconshreveable/log15/v3 v3.2.1 h1:oS4MCb1d5ep7xppvSI/1na3wnpih1VbqkEJQAWIgop0=
+github.com/inconshreveable/log15/v3 v3.2.1/go.mod h1:KzlHSHaUNx8G04/wxNni5+FSzHHl6c6qGYNcJcnxn68=
 github.com/kevinburke/rest v0.0.0-20260226201626-8eed36da8c35 h1:oKRql5U9KOeRmyyetZUKWSoAZFzFHakJ3tqdFBELVTc=
 github.com/kevinburke/rest v0.0.0-20260226201626-8eed36da8c35/go.mod h1:Fqq3AMJ2uvn3zSO5bO+FIM3gzJcA1+zAPJU2SnrwOuc=
 github.com/mattn/go-colorable v0.1.14 h1:9A9LHSqF/7dyVVX6g0U9cwm9pG3kP9gSzcuIPHPsaIE=
