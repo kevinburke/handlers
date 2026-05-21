@@ -6,6 +6,9 @@ package handlers
 
 import (
 	"bufio"
+	"bytes"
+	"compress/flate"
+	"compress/gzip"
 	"io"
 	"net"
 	"net/http"
@@ -15,6 +18,8 @@ import (
 )
 
 var contentType = "text/plain; charset=utf-8"
+
+var responseBody = bytes.Repeat([]byte("Gorilla!\n"), 1024)
 
 func compressedRequest(w *httptest.ResponseRecorder, compression string) {
 	GZip(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -30,6 +35,17 @@ func compressedRequest(w *httptest.ResponseRecorder, compression string) {
 		},
 	})
 
+}
+
+func assertResponseBody(t *testing.T, r io.Reader) {
+	t.Helper()
+	body, err := io.ReadAll(r)
+	if err != nil {
+		t.Fatalf("read response body: %v", err)
+	}
+	if !bytes.Equal(body, responseBody) {
+		t.Fatalf("wrong response body, got %d bytes want %d", len(body), len(responseBody))
+	}
 }
 
 func TestCompressHandlerNoCompression(t *testing.T) {
@@ -60,9 +76,15 @@ func TestCompressHandlerGzip(t *testing.T) {
 	if w.Header().Get("Content-Type") != "text/plain; charset=utf-8" {
 		t.Errorf("wrong content type, got %s want %s", w.Header().Get("Content-Type"), "text/plain; charset=utf-8")
 	}
-	if w.Body.Len() != 72 {
-		t.Errorf("wrong len, got %d want %d", w.Body.Len(), 72)
+	if got, wantLessThan := w.Body.Len(), len(responseBody); got >= wantLessThan {
+		t.Errorf("compressed body too large, got %d want less than %d", got, wantLessThan)
 	}
+	zr, err := gzip.NewReader(bytes.NewReader(w.Body.Bytes()))
+	if err != nil {
+		t.Fatalf("create gzip reader: %v", err)
+	}
+	defer zr.Close()
+	assertResponseBody(t, zr)
 	if l := w.Header().Get("Content-Length"); l != "" {
 		t.Errorf("wrong content-length. got %q expected %q", l, "")
 	}
@@ -78,8 +100,14 @@ func TestCompressHandlerDeflate(t *testing.T) {
 	if w.Header().Get("Content-Type") != "text/plain; charset=utf-8" {
 		t.Fatalf("wrong content type, got %s want %s", w.Header().Get("Content-Type"), "text/plain; charset=utf-8")
 	}
-	if w.Body.Len() != 54 {
-		t.Fatalf("wrong len, got %d want %d", w.Body.Len(), 54)
+	if got, wantLessThan := w.Body.Len(), len(responseBody); got >= wantLessThan {
+		t.Errorf("compressed body too large, got %d want less than %d", got, wantLessThan)
+	}
+	zr := flate.NewReader(bytes.NewReader(w.Body.Bytes()))
+	defer zr.Close()
+	assertResponseBody(t, zr)
+	if l := w.Header().Get("Content-Length"); l != "" {
+		t.Errorf("wrong content-length. got %q expected %q", l, "")
 	}
 }
 
