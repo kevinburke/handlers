@@ -6,7 +6,7 @@ require (
 	github.com/gofrs/uuid/v5 v5.4.0
 	github.com/inconshreveable/log15/v3 v3.2.1
 	github.com/kevinburke/rest v0.0.0-20260226201626-8eed36da8c35
-	github.com/mattn/go-colorable v0.1.14
+	github.com/mattn/go-colorable v0.1.15
 	golang.org/x/term v0.43.0
 )
 
