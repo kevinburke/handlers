@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/kevinburke/rest"
+	"github.com/kevinburke/rest/v2"
 )
 
 type route struct {

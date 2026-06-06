@@ -27,8 +27,8 @@ import (
 	"time"
 
 	uuid "github.com/gofrs/uuid/v5"
-	"github.com/kevinburke/rest"
-	"github.com/kevinburke/rest/resterror"
+	"github.com/kevinburke/rest/v2"
+	"github.com/kevinburke/rest/v2/resterror"
 )
 
 const Version = "0.49.0"

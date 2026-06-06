@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/inconshreveable/log15/v3"
-	"github.com/kevinburke/rest"
+	"github.com/kevinburke/rest/v2"
 )
 
 // Logger is a logger configured to avoid the 40-char spacing gap between the

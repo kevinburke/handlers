@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/kevinburke/rest"
+	"github.com/kevinburke/rest/v2"
 )
 
 type logHandler struct {
