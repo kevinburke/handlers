@@ -1,3 +1,14 @@
+### 0.50.0 - 2026-06-06
+
+Update `github.com/kevinburke/rest` imports to `github.com/kevinburke/rest/v2`
+v2.15.0.
+
+Remove the `github.com/mattn/go-colorable` dependency. The legacy pre-Go 1.21
+logger now writes colored terminal output directly to stdout instead of using a
+Windows ANSI compatibility wrapper.
+
+Update `actions/checkout` to v6.0.2.
+
 ### 0.49.0 - 2026-05-21
 
 Update `github.com/inconshreveable/log15/v3` to v3.2.1 and
