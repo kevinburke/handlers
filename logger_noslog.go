@@ -20,7 +20,6 @@ import (
 	"time"
 
 	"github.com/inconshreveable/log15/v3"
-	"github.com/mattn/go-colorable"
 	"golang.org/x/term"
 )
 
@@ -44,12 +43,11 @@ func NewLogger() log15.Logger {
 // messages at or more critical than the given level.
 func NewLoggerLevel(lvl log15.Lvl) log15.Logger {
 	l := log15.New()
-	var h log15.Handler
+	format := logfmtFormat()
 	if term.IsTerminal(int(os.Stdout.Fd())) {
-		h = log15.StreamHandler(colorable.NewColorableStdout(), termFormat())
-	} else {
-		h = log15.StreamHandler(os.Stdout, logfmtFormat())
+		format = termFormat()
 	}
+	h := log15.StreamHandler(os.Stdout, format)
 	l.SetHandler(log15.LvlFilterHandler(lvl, h))
 	return l
 }
