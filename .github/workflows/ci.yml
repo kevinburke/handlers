@@ -11,6 +11,6 @@ jobs:
       uses: WillAbides/setup-go-faster@main
       with:
         go-version: ${{ matrix.go-version }}
-    - uses: actions/checkout@v6.0.3
+    - uses: actions/checkout@v7.0.0
     - name: Run tests
       run: make ci
