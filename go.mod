@@ -3,7 +3,7 @@ module github.com/kevinburke/handlers
 go 1.25.0
 
 require (
-	github.com/gofrs/uuid/v5 v5.5.0
+	github.com/gofrs/uuid/v5 v5.5.1
 	github.com/inconshreveable/log15/v3 v3.2.1
 	github.com/kevinburke/rest/v2 v2.15.0
 	golang.org/x/term v0.45.0
